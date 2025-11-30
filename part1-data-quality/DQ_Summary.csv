@@ -1,0 +1,15 @@
+file,row_count,schema_ok,missing_columns,missing_client_id,missing_referrer,missing_user_agent,event_name_counts,unknown_event_names,invalid_timestamps,event_data_parse_errors,missing_eventdata_required,zero_revenue_orders,corrupt_items_orders,fake_referrers_count,orphan_checkout_count
+events_20250223.csv,4070,TRUE,[],22,2970,0,"{'page_viewed': 3754, 'product_added_to_cart': 180, 'checkout_started': 64, 'email_filled_on_popup': 51, 'checkout_completed': 21}",[],0,0,244,0,0,345,9
+events_20250224.csv,3769,TRUE,[],55,2908,0,"{'page_viewed': 3486, 'product_added_to_cart': 151, 'checkout_started': 54, 'email_filled_on_popup': 52, 'checkout_completed': 26}",[],0,0,205,1,1,244,17
+events_20250225.csv,3470,TRUE,[],34,2601,0,"{'page_viewed': 3211, 'product_added_to_cart': 133, 'checkout_started': 77, 'email_filled_on_popup': 33, 'checkout_completed': 16}",[],0,0,210,1,1,242,5
+events_20250226.csv,3177,TRUE,[],46,2246,0,"{'page_viewed': 2926, 'product_added_to_cart': 157, 'checkout_started': 46, 'email_filled_on_popup': 33, 'checkout_completed': 15}",[],0,0,203,0,0,278,5
+events_20250227.csv,3393,TRUE,[],34,2419,0,"{'page_viewed': 3142, 'product_added_to_cart': 142, 'checkout_started': 62, 'email_filled_on_popup': 26, 'checkout_completed': 21}",[],0,0,204,1,1,280,5
+events_20250228.csv,3263,TRUE,[],27,1947,0,"{'page_viewed': 2968, 'product_added_to_cart': 178, 'checkout_started': 53, 'email_filled_on_popup': 45, 'checkout_completed': 19}",[],0,0,231,1,1,455,8
+events_20250301.csv,3489,TRUE,[],23,1266,0,"{'page_viewed': 3152, 'product_added_to_cart': 191, 'checkout_started': 72, 'email_filled_on_popup': 45, 'checkout_completed': 29}",[],0,0,263,0,0,911,17
+events_20250302.csv,4335,TRUE,[],685,2028,0,"{'page_viewed': 3990, 'product_added_to_cart': 221, 'checkout_started': 53, 'email_filled_on_popup': 49, 'checkout_completed': 22}",[],0,0,274,0,0,982,9
+events_20250303.csv,4042,TRUE,[],351,1825,0,"{'page_viewed': 3705, 'product_added_to_cart': 202, 'checkout_started': 60, 'email_filled_on_popup': 51, 'checkout_completed': 24}",[],0,0,262,2,2,863,8
+events_20250304.csv,3538,FALSE,['referrer'],300,,0,"{'page_viewed': 3272, 'product_added_to_cart': 154, 'checkout_started': 61, 'email_filled_on_popup': 31, 'checkout_completed': 20}",[],0,0,215,2,2,0,10
+events_20250305.csv,2881,FALSE,['referrer'],228,,0,"{'page_viewed': 2648, 'product_added_to_cart': 104, 'checkout_started': 81, 'email_filled_on_popup': 28, 'checkout_completed': 20}",[],0,0,185,0,0,0,11
+events_20250306.csv,3442,FALSE,['referrer'],285,,0,"{'page_viewed': 3178, 'product_added_to_cart': 145, 'checkout_started': 65, 'email_filled_on_popup': 31, 'checkout_completed': 23}",[],0,0,210,2,23,0,6
+events_20250307.csv,3251,FALSE,['referrer'],270,,0,"{'page_viewed': 2983, 'product_added_to_cart': 165, 'checkout_started': 53, 'email_filled_on_popup': 34, 'checkout_completed': 16}",[],0,0,218,0,16,0,5
+events_20250308.csv,3843,FALSE,['referrer'],548,,0,"{'page_viewed': 3559, 'product_added_to_cart': 184, 'email_filled_on_popup': 43, 'checkout_started': 35, 'checkout_completed': 22}",[],0,0,219,0,22,0,9
