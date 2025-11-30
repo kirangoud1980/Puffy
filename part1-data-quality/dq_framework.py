@@ -2,7 +2,7 @@
 """
 dq_framework.py
 Enhanced Data Quality framework that:
- - Reads raw event CSVs (events_*.csv) from /mnt/data
+ - Reads raw event CSVs (events_*.csv) from /data
  - Applies DQ rules including mandatory fields and schema checks
  - Writes two outputs per file:
     - raw_clean/<file>_clean.csv  (valid records)
