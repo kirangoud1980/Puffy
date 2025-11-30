@@ -1,0 +1,199 @@
+Validation strategy
+===================
+A. Row-level unit tests — deterministic tests on small synthetic inputs to verify logic (sessionization, explosion, attribution).
+B. Reconciliation (aggregate) checks — compare counts & sums from RAW → STG → ANALYTICS (per-day, per-event-type).
+C. Completeness & lineage checks — ensure every analytics row maps back to raw rows (and vice versa where expected).
+D. Data quality checks — DQ rules from earlier enforced and monitored.
+E. Attribution sanity checks — ensure attribution windows/counts/revenue match expectations.
+F. Backfill & idempotency tests — verify rerunning transforms does not duplicate or lose data.
+
+
+A. Row-level unit tests (synthetic) — Python (pytest style)
+==============================================================
+Purpose: fast validation that logic works for controlled edge cases (session boundaries, multi-touch attribution).
+
+Save this as tests/test_session_attribution.py and run with pytest. Adapt DB runner to your infra.
+
+# tests/test_session_attribution.py
+import datetime, json
+import pandas as pd
+
+# Example: synthetic raw events for one client across 2 sessions and a purchase
+raw = [
+  {"client_id":"u1","timestamp":"2025-03-01T10:00:00Z","event_name":"page_viewed","referrer":"https://google.com/search","user_agent":"...","page_url":"/p1"},
+  {"client_id":"u1","timestamp":"2025-03-01T10:05:00Z","event_name":"product_added_to_cart","event_data":json.dumps({"items":[{"item_id":"sku1","item_price":100,"quantity":1}]})},
+  # 40-minute gap -> new session
+  {"client_id":"u1","timestamp":"2025-03-01T10:50:00Z","event_name":"page_viewed","referrer":"https://facebook.com/","user_agent":"...","page_url":"/p2"},
+  {"client_id":"u1","timestamp":"2025-03-01T11:00:00Z","event_name":"checkout_completed","event_data":json.dumps({"transaction_id":"ord1","revenue":100,"items":[{"item_id":"sku1","item_price":100,"quantity":1}]})}
+]
+
+# Run your staging/sessionization/attribution functions on this small DataFrame (call your code)
+# For demonstration, simple assertions you should assert:
+# - there should be 2 sessions
+# - checkout order should be attributed to last session (facebook) for last-click
+# - first-click attribution should pick the google session
+# Replace calls below with your ETL/test harness calls
+df = pd.DataFrame(raw)
+# TESTS (psuedocode - replace with calls to your transforms)
+assert len(run_sessionization(df)) == 2
+att_last = run_attribution_last_click(order_tx="ord1")
+assert att_last['channel'] == 'facebook'
+att_first = run_attribution_first_click(order_tx="ord1")
+assert att_first['channel'] == 'google'
+
+Why: proves session boundary logic and attribution window picks first/last touch correctly.
+
+
+
+B. Aggregate reconciliation checks
+================================================================
+1. Event counts should flow through pipeline (per day & event_name)
+
+-- RAW counts per day & event_name
+WITH raw_counts AS (
+  SELECT DATE(timestamp) AS event_date, event_name, COUNT(*) AS raw_count
+  FROM raw.events
+  GROUP BY event_date, event_name
+),
+stg_counts AS (
+  SELECT DATE(event_ts) AS event_date, event_name, COUNT(*) AS stg_count
+  FROM stg.events_clean
+  GROUP BY event_date, event_name
+)
+SELECT r.event_date, r.event_name, r.raw_count, s.stg_count,
+       SAFE_DIVIDE(s.stg_count, r.raw_count) AS retention_ratio
+FROM raw_counts r
+LEFT JOIN stg_counts s
+  ON r.event_date = s.event_date AND r.event_name = s.event_name;
+
+Acceptance: retention_ratio >= 0.98 for non-DQ-failed events; any major gaps require investigation.
+
+2. All checkout_completed in STG present in orders table
+
+SELECT
+  COUNT(*) AS stg_checkouts,
+  (SELECT COUNT(*) FROM analytics.orders) AS orders_count,
+  SAFE_DIVIDE((SELECT COUNT(*) FROM analytics.orders), COUNT(*)) AS percent_matched
+FROM stg.events_clean
+WHERE event_name='checkout_completed';
+
+Acceptance: percent_matched >= 0.995 (allow tiny differences for DQ rejects). If lower, investigate missing session joins or filter logic.
+
+3. Revenue reconciliation (per day)
+
+WITH raw_revenue AS (
+  SELECT DATE(event_ts) AS evt_date, SUM(CAST(SAFE_JSON_EXTRACT_SCALAR(event_data,'$.revenue') AS NUMERIC)) AS raw_revenue
+  FROM stg.events_clean
+  WHERE event_name='checkout_completed'
+  GROUP BY evt_date
+),
+orders_revenue AS (
+  SELECT DATE(order_ts) AS order_date, SUM(revenue) AS orders_revenue
+  FROM analytics.orders
+  GROUP BY order_date
+)
+SELECT r.evt_date, r.raw_revenue, o.orders_revenue,
+       SAFE_DIVIDE(o.orders_revenue, r.raw_revenue) AS pct
+FROM raw_revenue r
+LEFT JOIN orders_revenue o ON r.evt_date = o.order_date;
+
+Acceptance: pct near 1.0 (>= 0.98). If orders_revenue < raw_revenue, you lost revenue in orders transform; if orders_revenue > raw_revenue, duplicate aggregation exists.
+
+4. Item-level revenue vs order revenue
+
+SELECT o.transaction_id, o.revenue, SUM(i.item_price * i.quantity) AS items_sum
+FROM analytics.orders o
+LEFT JOIN UNNEST(o.items) i
+GROUP BY o.transaction_id, o.revenue
+HAVING ABS(o.revenue - SUM(i.item_price * i.quantity)) > 1; -- tolerance $1
+
+Acceptance: No rows (or only planned small tolerance) — else item extraction or currency handling bug.
+
+
+
+C. Lineage & completeness checks
+====================================
+1. Every analytics.order must map to at least one raw checkout_completed id
+
+SELECT a.transaction_id
+FROM analytics.orders a
+LEFT JOIN stg.events_clean s
+  ON a.transaction_id = s.transaction_id AND s.event_name='checkout_completed'
+WHERE s.transaction_id IS NULL LIMIT 10;
+
+Acceptance: zero rows. If not zero: investigate join keys or parsing.
+
+2. Session coverage check — percent of events assigned to sessions
+
+SELECT COUNT(*) AS total_events,
+ SUM(CASE WHEN session_id IS NOT NULL THEN 1 ELSE 0 END) AS mapped_events,
+ SAFE_DIVIDE(SUM(CASE WHEN session_id IS NOT NULL THEN 1 ELSE 0 END), COUNT(*)) AS session_coverage
+FROM analytics.session_events;
+
+Acceptance: session_coverage >= 0.9 for events with client_id present. Low coverage implies sessionization bug or client_id missing.
+
+
+
+D. Attribution correctness checks
+===================================
+1. For each attributed order, attributed touch must be inside 7-day window
+
+SELECT o.transaction_id, o.order_ts, t.session_start_ts
+FROM analytics.attribution_last_click at
+JOIN analytics.orders o ON at.transaction_id = o.transaction_id
+JOIN analytics.touches t ON at.last_touch.session_id = t.session_id
+WHERE t.session_start_ts < TIMESTAMP_SUB(o.order_ts, INTERVAL 7 DAY)
+   OR t.session_start_ts > o.order_ts;
+
+Acceptance: zero rows.
+
+2. First vs Last click totals should sum to orders count
+
+SELECT
+ (SELECT COUNT(*) FROM analytics.orders) AS total_orders,
+ (SELECT COUNT(*) FROM analytics.attribution_first_click) AS first_count,
+ (SELECT COUNT(*) FROM analytics.attribution_last_click) AS last_count;
+
+Acceptance: first_count == total_orders and last_count == total_orders (NULLs permitted when no touch found; track NULL rate).
+
+3. No double-attribution per order — each order should have at most 1 attributed touch per model.
+
+
+
+E. DQ checks automation (Great Expectations snippets)
+======================================================
+Use Great Expectations to assert schema, non-null constraints and numeric checks. Example expectation YAML (pseudo):
+
+expect_table_to_have_columns:
+  - client_id
+  - page_url
+  - referrer
+  - timestamp
+  - event_name
+  - event_data
+  - user_agent
+
+expect_column_values_to_not_be_null:
+  - column: client_id
+    
+expect_column_values_to_be_in_set:
+  - column: event_name
+    value_set: ['page_viewed','product_added_to_cart','checkout_started','checkout_completed']
+
+Acceptance: All expectations pass; otherwise fail pipeline.
+
+
+F. Backfill & idempotency checks
+=======================================
+1. Idempotency test: Run transform twice and confirm analytics tables remain identical.
+
+Simplest approach: store checksum of table content.
+
+-- Compute checksum (example)
+SELECT FARM_FINGERPRINT(TO_JSON_STRING(t)) AS row_hash
+FROM analytics.orders t;
+-- compare counts per hash between runs
+
+Acceptance: Checksums identical.
+
+2. Backfill reconciliation: After reprocessing a day, ensure aggregates match previous totals (or differ only by expected corrections recorded in DQ audit).
