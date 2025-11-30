@@ -206,3 +206,137 @@ But extremely fast for BI dashboards
 Why:
 Attribution is query-heavy; pre-materialization improves dashboard responsiveness dramatically.
 
+
+
+1) How do you approach sessionization?
+=======================================
+
+What we implemented?
+
+Deterministic sessionization in 03_sessions/01_analytics_sessions.sql.
+
+Rules implemented:
+
+New session when gap > 30 minutes (industry standard).
+New session when referrer_host changes.
+New session when device_type changes (mobile ↔ desktop).
+Session output includes: session_id (client_id + session_start_ts), session_start_ts, session_end_ts, session_duration_seconds, pages_in_session, events_in_session, session_referrer, session_device.
+
+Where to find it
+
+sql_repo/03_sessions/01_analytics_sessions.sql
+
+Session mapping: sql_repo/04_session_events/01_analytics_session_events.sql
+
+Why this design
+
+Deterministic IDs = reproducible results on re-run / backfill.
+30-min timeout balances fragmentation vs merging; referrer/device change prevents mixing campaign-launched sessions.
+
+Potential improvements / gaps
+Cross-device stitching (not implemented) — requires deterministic user identity (CRM or hashed email) or probabilistic matching.
+
+Optional: session boundary tuning per product (mobile-first products may want shorter/longer window).
+
+
+2) What attributes and metrics do you choose to calculate?
+============================================================
+
+Attributes extracted (staging)
+
+client_id, page_url, referrer, referrer_host
+event_ts (timestamp), event_name, event_data
+
+Parsed commerce fields: transaction_id, revenue, items_json (exploded into item_id, item_price, quantity, item_name)
+
+device_type (Mobile / Tablet / Desktop)
+
+Session-level metrics
+
+pages_in_session, events_in_session, session_start_ts, session_end_ts, session_duration_seconds, session_referrer, session_device
+(See: 03_sessions/01_analytics_sessions.sql)
+
+Order-level attributes
+
+transaction_id, order_ts, revenue, session_id, items[] (with item_id, item_price, quantity)
+(See: 05_orders/01_analytics_orders.sql)
+
+Derived KPIs & metrics implemented
+
+Sessions, Users (distinct client_id), Sessions per user
+Pageviews (via session_events)
+
+Add-to-cart count (product_added_to_cart)
+
+Checkout started (checkout_started)
+
+Purchases (orders), revenue (sum), avg order value (AOV)
+
+Conversion rates: ATC → Checkout → Purchase funnel
+
+Channel-level KPIs by attribution (purchases, revenue, AOV)
+
+Engagement by device & channel
+
+(See: 07_views/* and validation SQLs)
+
+
+3) How do you handle attribution in a real e-commerce context?
+================================================================
+
+Model implemented
+Touches: session-level touches in 06_attribution/01_analytics_touches.sql.
+
+Channel mapping via referrer_host and simple rules (UTM parsing optional).
+Lookback window: 7 days prior to order_ts.
+
+First-click: earliest qualifying touch in the 7-day window — 06_attribution/03_attribution_first_click.sql.
+Last-click: most recent qualifying touch in the 7-day window — 06_attribution/02_attribution_last_click.sql.
+
+Fallback rules:
+If no touch found: attribute to Direct or keep NULL (configurable).
+Optionally prefer non-Direct touches for last-click (configurable in business rule).
+Attribution applied at order level (per transaction_id) — typical e-commerce practice.
+
+Where to find it
+
+06_attribution/* SQL files in the repo.
+
+
+4) Does your output reconcile with your inputs?
+=====================================================
+Reconciliation SQL checks to compare RAW → STG → ANALYTICS:
+
+Event retention check (01_reconciliation/01_event_retention.sql)
+Orders revenue reconciliation (01_reconciliation/02_orders_reconciliation.sql)
+Lineage: orders → raw checkout presence (02_lineage/01_orders_to_raw_lineage.sql)
+Session coverage (02_lineage/02_session_coverage.sql)
+Attribution window validations (03_attribution_validation/*)
+DQ anomaly checks (zero revenue, corrupt items) (04_dq_monitoring/*)
+
+Acceptance criteria
+We provided recommended thresholds (e.g., retention ratio ≥ 98%, orders matched ≥ 99.5%, session coverage ≥ 90%) and SQL to compute them. These checks are in the validation repo.
+
+5) Is your code maintainable and your architecture scalable?
+============================================================
+Maintainability
+
+Layered design (RAW → STG → ANALYTICS → VIEWS) decouples concerns and makes debugging/reprocessing straightforward.
+SQL files organized by purpose and execution order (foldered repo ready for GitHub).
+DQ checks and validation SQLs are separated so teams can add new checks easily.
+Deterministic session IDs and reproducible joins make re-runs idempotent.
+
+Scalability
+
+Designed for columnar warehouses (BigQuery/Snowflake/Redshift):
+
+Use partitioning by date (event_ts / order_ts) to limit scan costs.
+Use clustering (by client_id/session_id) to accelerate joins.
+Materialize heavy attribution tables (daily) to avoid repetitive windowed queries at dashboard time.
+Item explosion & sessionization done in SQL window functions — scalable in MPP engines.
+
+Operational considerations
+
+For streaming/near-real-time needs, implement incremental/upsert-based ETL with streaming layer (Kafka / PubSub) and micro-batches.
+For extreme scale (billions of events/day), consider sharding by event_date and leverage pre-aggregation.
+
