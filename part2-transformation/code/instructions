@@ -1,0 +1,2 @@
+1) Place both python files dq_framework.py and load_clean_to_bigquery.py in /data directory
+2) Execute attached Airflow DAG
