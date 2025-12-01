@@ -43,7 +43,7 @@ SQL_REPO_PATH = Variable.get("SQL_REPO_PATH", default_var="/opt/airflow/sql")
 EXECUTION_ENGINE = Variable.get("EXECUTION_ENGINE", default_var="bigquery")  # 'bigquery' or 'postgres'
 BQ_CONN_ID = Variable.get("BQ_CONN_ID", default_var="google_cloud_default")
 PG_CONN_ID = Variable.get("PG_CONN_ID", default_var="postgres_default")
-RAW_FILES_PATH = Variable.get("RAW_FILES_PATH", default_var="/data/raw")  # optional sensor path
+RAW_FILES_PATH = Variable.get("RAW_FILES_PATH", default_var="/data")  # optional sensor path
 
 default_args = {
     "owner": "data-platform",
