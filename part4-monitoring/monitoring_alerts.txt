@@ -1,0 +1,2 @@
+WARN - missing_referrer_pct - value=40.45 threshold=20.0 message=Missing referrer percent high
+WARN - revenue_gap_pct - value=100.0 threshold=3.0 message=Revenue reconciliation gap exceeded threshold

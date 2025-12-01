@@ -1,0 +1,191 @@
+{
+  "generated_at": "2025-12-01T06:54:46.958877",
+  "files": {
+    "events_20250223.csv": {
+      "raw_rows": 4070,
+      "missing_client_id": 22,
+      "missing_client_id_pct": 0.541,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 2970,
+      "missing_referrer_pct": 72.973,
+      "raw_revenue_sum": 20408.0
+    },
+    "events_20250224.csv": {
+      "raw_rows": 3769,
+      "missing_client_id": 55,
+      "missing_client_id_pct": 1.459,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 2908,
+      "missing_referrer_pct": 77.156,
+      "raw_revenue_sum": 25457.6
+    },
+    "events_20250225.csv": {
+      "raw_rows": 3470,
+      "missing_client_id": 34,
+      "missing_client_id_pct": 0.98,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 2601,
+      "missing_referrer_pct": 74.957,
+      "raw_revenue_sum": 13543.0
+    },
+    "events_20250226.csv": {
+      "raw_rows": 3177,
+      "missing_client_id": 46,
+      "missing_client_id_pct": 1.448,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 2246,
+      "missing_referrer_pct": 70.696,
+      "raw_revenue_sum": 18629.0
+    },
+    "events_20250227.csv": {
+      "raw_rows": 3393,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 2419,
+      "missing_referrer_pct": 71.294,
+      "raw_revenue_sum": 18148.0
+    },
+    "events_20250228.csv": {
+      "raw_rows": 3263,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 1947,
+      "missing_referrer_pct": 59.669,
+      "raw_revenue_sum": 18669.0
+    },
+    "events_20250301.csv": {
+      "raw_rows": 3489,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 1266,
+      "missing_referrer_pct": 36.285,
+      "raw_revenue_sum": 33183.0
+    },
+    "events_20250302.csv": {
+      "raw_rows": 4335,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 2028,
+      "missing_referrer_pct": 46.782,
+      "raw_revenue_sum": 28221.0
+    },
+    "events_20250303.csv": {
+      "raw_rows": 4042,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "missing_referrer": 1825,
+      "missing_referrer_pct": 45.151,
+      "raw_revenue_sum": 20504.8
+    },
+    "events_20250304.csv": {
+      "raw_rows": 3538,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "raw_revenue_sum": 12415.0
+    },
+    "events_20250305.csv": {
+      "raw_rows": 2881,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "raw_revenue_sum": 20714.0
+    },
+    "events_20250306.csv": {
+      "raw_rows": 3442,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "raw_revenue_sum": 21754.0
+    },
+    "events_20250307.csv": {
+      "raw_rows": 3251,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "raw_revenue_sum": 18331.0
+    },
+    "events_20250308.csv": {
+      "raw_rows": 3843,
+      "missing_client_id": null,
+      "missing_client_id_pct": null,
+      "missing_timestamp": 0,
+      "missing_timestamp_pct": 0.0,
+      "missing_event_name": 0,
+      "missing_event_name_pct": 0.0,
+      "raw_revenue_sum": 24484.0
+    }
+  },
+  "alerts": [
+    {
+      "severity": "WARN",
+      "metric": "missing_referrer_pct",
+      "value": 40.45,
+      "threshold": 20.0,
+      "message": "Missing referrer percent high"
+    },
+    {
+      "severity": "WARN",
+      "metric": "revenue_gap_pct",
+      "value": 100.0,
+      "threshold": 3.0,
+      "message": "Revenue reconciliation gap exceeded threshold"
+    }
+  ],
+  "clean_summary": {
+    "total_clean_files": 0,
+    "total_clean_rows": 0,
+    "per_file": {}
+  },
+  "dq_summary": {},
+  "revenue": {
+    "raw_revenue": 294461.4,
+    "clean_revenue": 0,
+    "diff": 294461.4,
+    "diff_pct": 100.0
+  }
+}
