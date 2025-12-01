@@ -1,0 +1,159 @@
+Below is Business Performance Assessment (Built on transformed data)
+
+1) What’s Working
+===================
+A. Marketing channels are generating meaningful revenue (even with gaps).
+
+From first-click and last-click attribution:
+
+Certain channels consistently appear as top revenue drivers (the data suggests Google Search / Organic and Direct-returning users show repeated touch patterns).
+Returning visitors contribute disproportionately to completed checkouts, indicating strong brand familiarity.
+
+Even though DQ issues distorted some days, the underlying pattern shows healthy demand and meaningful marketing influence.
+
+B. Engagement levels remain steady across the 14-day period.
+
+Based on event counts & funnels:
+
+Daily event volume is stable (no traffic crash), indicating no disruption in user activity.
+Users continue to browse, add items, and initiate checkout at normal rates.
+Funnel engagement (PV → ATC → Checkout Start) appears steady, confirming that user intent remains strong.
+
+This means the business fundamentals (traffic + user intent) are intact.
+
+C. Mobile usage is strong and rising.
+
+From device analysis:
+
+Mobile > Desktop in unique active users.
+Mobile users generate a large share of top-of-funnel activity (page views, product exploration).
+
+This implies marketing spend on mobile discovery channels is effective.
+
+D. Attribution windows still capture meaningful multi-day behavior.
+
+The model picked up:
+
+Many buyers had multiple touchpoints over several days.
+The 7-day window captured a realistic spread of interactions, showing buyers are not purely impulse-driven.
+
+That suggests high research-driven buyer behavior, typical of considered purchases — good for brand stability.
+
+2) What's Concerning
+=====================
+A. Revenue reporting is inconsistent due to multiple issues.
+
+Zero-revenue checkouts artificially depress revenue totals.
+Missing/invalid items arrays break product-level insights.
+Some transactions have no buyer identity or channel association.
+
+This means dashboards may show lower revenue trends than reality.
+
+B. Marketing attribution is heavily distorted.
+
+Because of missing referrer and identity loss:
+
+Large % of purchases are attributed to Direct/Unknown.
+True paid channel contribution is systematically under-counted.
+Campaign ROI may appear worse than it actually is.
+
+This creates a false signal that marketing isn’t working — when it may be performing well.
+
+C. Significant identity loss (missing client_id) breaks behavioral patterns.
+
+This causes:
+Session drops (lower sessions-per-user)
+Reduced funnel visibility
+Broken user journey paths
+Inability to link earlier marketing touches to purchases
+
+This is operationally concerning because it hides real behavioral trends.
+
+D. Conversion funnel appears artificially weak due to corrupt events.
+
+Missing event_data for key commerce steps makes it look like:
+Fewer add-to-carts are happening
+Fewer checkouts are initiated
+
+But this is not user behavior — it’s data failure.
+
+E. Some files contain synthetic/fake referrers.
+
+This injects noise into channel performance and decreases confidence in attribution.
+
+
+3) Key Patterns in User Behavior (Based on actual data trends)
+===============================================================
+
+A. Users show multi-step buying behavior
+
+Many buyers viewed products across multiple sessions, indicating:
+Research-driven purchasing
+Strong consideration stage
+Value in remarketing & retargeting
+
+B. High top-of-funnel engagement
+
+Page views and browsing events remain strong across all days, even during data issues.
+
+This indicates user demand is stable.
+
+C. Return visitors contribute strongly to conversions
+
+Users converting often had earlier touches, suggesting:
+Brand familiarity is high
+Paid channels effectively drive first-time visits
+Direct/return visits close the sale
+
+D. Device pattern: Mobile dominates discovery, Desktop contributes to conversion
+
+A common industry pattern observed here:
+Users browse on Mobile
+Users complete checkout mostly on Desktop (in the days with good data)
+
+Even with corrupted days, this pattern is visible.
+
+
+4) Key Patterns in Marketing Performance
+===========================================
+
+A. Channels are doing their job at top-of-funnel
+
+Early-step events (landing pages, browsing) correlate with marketing touchpoints such as:
+Organic Search
+Paid Search
+Referral sites
+
+Marketing is successfully driving awareness & consideration.
+
+B. Attribution shows assist value across multiple touches
+
+The 7-day lookback reveals:
+Many purchases have more than one touch
+Early touch (first-click) is not the same as the final conversion channel (last-click)
+
+This indicates:
+Display/Paid social play a discovery role
+Direct/Organic play a conversion role
+
+C. Null referrers distort but do not eliminate channel patterns
+
+Even where referrer was present:
+Consistent channel structures reappear
+Repeatable clusters of channel usage exist (Organic → Direct, Paid → Direct, Referral → Direct)
+
+This means the underlying marketing mix is working.
+
+
+Overall - Despite significant data quality failures in March, the actual user behavior and marketing performance remain healthy:
+
+Traffic is stable
+Engagement is strong
+Mobile remains critical
+Multi-touch funnel is functioning
+Marketing channels influence early-stage engagement
+Conversions are driven by return visits, highlighting brand strength
+
+BUT — core analytics and attribution are currently unreliable due to missing referrers, missing client IDs, and malformed order payloads.
+
+Once these regressions are resolved and backfilled, the business will have accurate visibility again, and performance is likely better than what current dashboards show.
