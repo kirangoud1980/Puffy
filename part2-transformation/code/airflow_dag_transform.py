@@ -16,7 +16,7 @@ Requirements:
 - For BigQuery execution: google provider and BigQueryHook (connection id configured)
 - For Postgres/Redshift: use PostgresHook (or adapt to other hooks)
 
-Place this file in your Airflow DAGs folder (e.g., /opt/airflow/dags/airflow_transform.py)
+Place this file in your Airflow DAGs folder (e.g., /opt/airflow/dags/airflow_dag_transform.py)
 """
 
 from datetime import datetime, timedelta
