@@ -57,5 +57,5 @@ This monitoring system ensures data accuracy and trustworthiness for the daily p
 ## Implementation plan / components
 1. Lightweight runner (Python) that runs daily after DAG complete.
 2. Persists `monitoring_report.json` and `monitoring_alerts.txt` in `/data/monitoring/` for audit and dashboarding.
-3. Optionally integrates with observability (Prometheus/Grafana) or messaging (Slack/PagerDuty).
+3. Onboard "Monte Carlo" platform and integrate it for Data Observability. It has excellent capabilities for data anomaly detection for various pillars like Volume, Freshness, Lineage, Distribution and Schema.
 4. Include a small set of unit tests and sample fixtures for CI.
