@@ -56,6 +56,6 @@ This monitoring system ensures data accuracy and trustworthiness for the daily p
 
 ## Implementation plan / components
 1. Lightweight runner (Python) that runs daily after DAG complete.
-2. Persists `monitoring_report.json` and `monitoring_alerts.txt` in `/mnt/data/monitoring/` for audit and dashboarding.
+2. Persists `monitoring_report.json` and `monitoring_alerts.txt` in `/data/monitoring/` for audit and dashboarding.
 3. Optionally integrates with observability (Prometheus/Grafana) or messaging (Slack/PagerDuty).
 4. Include a small set of unit tests and sample fixtures for CI.
